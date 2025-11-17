@@ -1,0 +1,3 @@
+import pandas as pd
+cc = pd.read_csv('UCI_Credit_Card.csv')
+print(cc)
