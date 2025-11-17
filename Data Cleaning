@@ -23,4 +23,5 @@ cc = cc[cc['bill_avg'] != 0]
 # Below is creating the average credit utilization
 cc['avg_credit_util'] = cc['bill_avg'] / cc['LIMIT_BAL']
 #print(cc['avg_credit_util'].head())
-#Next step needs to convert those values to percentages
+#Next converts those values to percentages
+cc['avg_credit_util_pct'] = (cc['bill_avg'] / cc['LIMIT_BAL']) * 100
