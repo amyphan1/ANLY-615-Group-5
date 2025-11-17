@@ -1,27 +1,36 @@
 import pandas as pd
 cc = pd.read_csv('UCI_Credit_Card.csv')
 # cc.head()
+
 # Below is dropping demographics from the data set
 cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
 # cc.head()
+
 # Next 3 lines of code is cleaning #s from 'e+05' to standard floats
 cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
 cc['LIMIT_BAL'] = cc['LIMIT_BAL'].replace(',', '', regex=True).astype(float)
 # print(cc.head(20))
+
 import numpy as np
+
 # Below is replacing '-2' values in pay columns with NaN
-pay_colms = ['PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
-cc[pay_colms] = cc[pay_colms].replace(-2, np.nan)
+pay_cols = ['PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
+cc[pay_cols] = cc[pay_cols].replace(-2, np.nan)
 # print(cc.head(10))
+
 # Below is creating a column for the avg bill amount
-cc['bill_avg'] = cc[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
-# print(cc['bill_avg'].head(15))
+cc['BILL_AVG'] = cc[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
+# print(cc['BILL_AVG'].head(15))
 # print(cc.shape)
+
 # Below is dropping the rows where bill avg = 0 (aka 0 debt)
-cc = cc[cc['bill_avg'] != 0]
+cc = cc[cc['BILL_AVG'] != 0]
 # print(cc.shape)
+
 # Below is creating the average credit utilization
-cc['avg_credit_util'] = cc['bill_avg'] / cc['LIMIT_BAL']
-#print(cc['avg_credit_util'].head())
+cc['AVG_CREDIT_UTIL'] = cc['BILL_AVG'] / cc['LIMIT_BAL']
+#print(cc['AVG_CREDIT_UTIL'].head())
+
 #Next converts those values to percentages
-cc['avg_credit_util_pct'] = (cc['bill_avg'] / cc['LIMIT_BAL']) * 100
+cc['AVG_CREDIT_UTIL_PCT'] = (cc['BILL_AVG'] / cc['LIMIT_BAL']) * 100
+
