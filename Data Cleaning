@@ -36,3 +36,13 @@ cc['AVG_CREDIT_UTIL_PCT'] = (cc['BILL_AVG'] / cc['LIMIT_BAL']) * 100
 
 # Next step is exporting the clean dataset 
 cc.to_csv('cleaned_dataset.csv', index=False)
+
+# Creating a new df with our cleaned dataset
+clean_df = pd.read_csv('cleaned_dataset.csv')
+
+## Creating the database
+import sqlite3
+conn = sqlite3.connect('cc')
+
+# Writing our cleaned data to the database - returns 29130 rows which is how many rows are in our cleaned dataset
+clean_df.to_sql('my_table', conn, index=False, if_exists='replace')
