@@ -1,3 +1,19 @@
 import pandas as pd
 cc = pd.read_csv('UCI_Credit_Card.csv')
-print(cc)
+# cc.head()
+# Below is dropping demographics from the data set
+cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
+# cc.head()
+# Next 3 lines of code is cleaning #s from 'e+05' to standard integers
+cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
+cc['LIMIT_BAL'] = cc['LIMIT_BAL'].astype(int)
+cc['LIMIT_BAL'] = cc['LIMIT_BAL'].apply(lambda x: f"{int(x):,}")
+# print(cc.head(20))
+import numpy as np
+# Below is replacing '-2' values in pay columns with NaN
+pay_colms = ['PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
+cc[pay_colms] = cc[pay_colms].replace(-2, np.nan)
+# print(cc.head(10))
+# Below is creating a column for the avg bill amount
+cc['bill_avg'] = cc[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
+# print(cc['bill_avg'].head(15))
