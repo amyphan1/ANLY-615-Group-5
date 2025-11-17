@@ -34,3 +34,5 @@ cc['AVG_CREDIT_UTIL'] = cc['BILL_AVG'] / cc['LIMIT_BAL']
 #Next converts those values to percentages
 cc['AVG_CREDIT_UTIL_PCT'] = (cc['BILL_AVG'] / cc['LIMIT_BAL']) * 100
 
+# Next step is exporting the clean dataset 
+cc.to_csv('cleaned_dataset.csv', index=False)
