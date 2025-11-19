@@ -56,5 +56,8 @@ FROM my_table GROUP BY id, default_pmt_next_month"""
 
 sum_amts_owed_and_payed = pd.read_sql(query, conn)
 
+#Identify High Credit Utilization Users who defaulted
+query2 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.3) AND (default_pmt_next_month == 1)"""
 
+high_credit_util_and_default = pd.read_sql(query2, conn)
 
