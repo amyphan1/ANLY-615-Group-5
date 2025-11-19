@@ -50,4 +50,11 @@ conn = sqlite3.connect('cc')
 # Writing our cleaned data to the database - returns 29130 rows which is how many rows are in our cleaned dataset
 clean_df.to_sql('my_table', conn, index=False, if_exists='replace')
 
+#To see how much each customer owes and paid
+query = """SELECT id, default_pmt_next_month, SUM(BILL_AMT1 + BILL_AMT2 + BILL_AMT3 + BILL_AMT4 + BILL_AMT5 + BILL_AMT6) AS AMT_OWED, SUM(PAY_AMT1 + PAY_AMT2 + PAY_AMT3 + PAY_AMT4 + PAY_AMT5 + PAY_AMT6) AS AMT_PAYED
+FROM my_table GROUP BY id, default_pmt_next_month"""
+
+sum_amts_owed_and_payed = pd.read_sql(query, conn)
+
+
 
