@@ -41,7 +41,7 @@ cc['AVG_CREDIT_UTIL_PCT'] = (cc['BILL_AVG'] / cc['LIMIT_BAL']) * 100
 cc.to_csv('cleaned_dataset.csv', index=False)
 
 # Creating a new df with our cleaned dataset
-clean_df = pd.read_csv('cleaned_dataset.csv')
+cc.to_excel('cleaned_dataset.xlsx', index=False)
 
 ## Creating the database
 import sqlite3
