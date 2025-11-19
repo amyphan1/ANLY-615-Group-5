@@ -6,6 +6,9 @@ cc = pd.read_csv('UCI_Credit_Card.csv')
 cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
 # cc.head()
 
+#Renaming columns with a period to underscores for SQL compatability later
+cc.rename(columns={'default.payment.next.month': 'default_pmt_next_month'}, inplace=True)
+
 # Next 3 lines of code is cleaning #s from 'e+05' to standard floats
 cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
 cc['LIMIT_BAL'] = cc['LIMIT_BAL'].replace(',', '', regex=True).astype(float)
@@ -46,3 +49,5 @@ conn = sqlite3.connect('cc')
 
 # Writing our cleaned data to the database - returns 29130 rows which is how many rows are in our cleaned dataset
 clean_df.to_sql('my_table', conn, index=False, if_exists='replace')
+
+
