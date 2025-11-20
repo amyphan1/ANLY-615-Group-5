@@ -112,5 +112,3 @@ query9 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.49 AND AVG_CREDIT_
 low_default = pd.read_sql(query9, conn)
 low_default
 
-##
-
