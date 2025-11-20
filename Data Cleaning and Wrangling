@@ -65,50 +65,49 @@ query3 = """SELECT * COUNT id WHERE AVG_CREDIT_UTIL > 0.3"""
 
 number_at_risk = pd.read_sql(query3, conn)
 
-##
+#Number of customers at risk of a default 
 query3 = """SELECT COUNT(id) FROM my_table WHERE AVG_CREDIT_UTIL > 0.29"""
 
 number_at_risk = pd.read_sql(query3, conn)
 number_at_risk
 
-##
+#Total number of customers
 query4 = """SELECT COUNT(id) FROM my_table"""
 total_ids = pd.read_sql(query4, conn)
 total_ids
 
-##
+#Percentage of customers at risk
 pct_at_risk = (number_at_risk / total_ids) * 100
 pct_at_risk
 
-##
-query5 = """SELECT id FROM my_table WHERE (AVG_CREDIT_UTIL > 0.30 AND AVG_CREDIT_UTIL < 0.49)"""
+#Low risk customers
+query5 = """SELECT id FROM my_table WHERE (AVG_CREDIT_UTIL > 0.29 AND AVG_CREDIT_UTIL < 0.49)"""
 low_risk = pd.read_sql(query5, conn)
 low_risk
 
 
-##
+#High risk customers
 query6 = """SELECT id FROM my_table WHERE AVG_CREDIT_UTIL > 0.50"""
 high_risk = pd.read_sql(query6, conn)
 high_risk
 
-##
 #Identify 90+ Credit Utilization Users who defaulted
 query7 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.89) AND (default_pmt_next_month == 1)"""
 
 high_default = pd.read_sql(query7, conn)
 high_default
 
-##
 #Identify 75-89 Credit Utilization Users who defaulted
 query8 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.74 AND AVG_CREDIT_UTIL < 0.89) AND (default_pmt_next_month == 1)"""
 
 moderate_default = pd.read_sql(query8, conn)
 moderate_default
 
-##
 #Identify 50-74 Credit Utilization Users who defaulted
 query9 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.49 AND AVG_CREDIT_UTIL < 0.74) AND (default_pmt_next_month == 1)"""
 
 low_default = pd.read_sql(query9, conn)
 low_default
 
+cc.info()
+cc.describe()
