@@ -112,6 +112,8 @@ cc.describe()
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+#Scatterplot to visualize the relationship between bill avg and default pmt next month with added hue on whether customer defaulted
+
 cc['Default Status'] = cc['DEFAULT_PMT_NEXT_MONTH'].map({0: 'Not Defaulted', 1:'Defaulted'})
 plt.figure(figsize=(8,6))
 sns.scatterplot(data=cc, x='BILL_AVG', y='AVG_CREDIT_UTIL', hue='Default Status', palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, alpha=0.3)
