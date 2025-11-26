@@ -7,7 +7,7 @@ cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
 # cc.head()
 
 #Renaming columns with a period to underscores for SQL compatability later
-cc.rename(columns={'default.payment.next.month': 'default_pmt_next_month'}, inplace=True)
+cc.rename(columns={'default.payment.next.month': 'DEFAULT_PMT_NEXT_MONTH'}, inplace=True)
 
 # Next 3 lines of code is cleaning #s from 'e+05' to standard floats
 cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
@@ -51,19 +51,15 @@ conn = sqlite3.connect('cc')
 clean_df.to_sql('my_table', conn, index=False, if_exists='replace')
 
 #To see how much each customer owes and paid
-query = """SELECT id, default_pmt_next_month, SUM(BILL_AMT1 + BILL_AMT2 + BILL_AMT3 + BILL_AMT4 + BILL_AMT5 + BILL_AMT6) AS AMT_OWED, SUM(PAY_AMT1 + PAY_AMT2 + PAY_AMT3 + PAY_AMT4 + PAY_AMT5 + PAY_AMT6) AS AMT_PAYED
-FROM my_table GROUP BY id, default_pmt_next_month"""
+query = """SELECT id, DEFAULT_PMT_NEXT_MONTH, SUM(BILL_AMT1 + BILL_AMT2 + BILL_AMT3 + BILL_AMT4 + BILL_AMT5 + BILL_AMT6) AS AMT_OWED, SUM(PAY_AMT1 + PAY_AMT2 + PAY_AMT3 + PAY_AMT4 + PAY_AMT5 + PAY_AMT6) AS AMT_PAYED
+FROM my_table GROUP BY id, DEFAULT_PMT_NEXT_MONTH"""
 
 sum_amts_owed_and_payed = pd.read_sql(query, conn)
 
 #Identify High Credit Utilization Users who defaulted
-query2 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.29) AND (default_pmt_next_month == 1)"""
+query2 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.29) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
 
 high_credit_util_and_default = pd.read_sql(query2, conn)
-
-query3 = """SELECT * COUNT id WHERE AVG_CREDIT_UTIL > 0.29"""
-
-number_at_risk = pd.read_sql(query3, conn)
 
 #Number of customers at risk of a default 
 query3 = """SELECT COUNT(id) FROM my_table WHERE AVG_CREDIT_UTIL > 0.29"""
@@ -92,22 +88,34 @@ high_risk = pd.read_sql(query6, conn)
 high_risk
 
 #Identify 90+ Credit Utilization Users who defaulted
-query7 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.89) AND (default_pmt_next_month == 1)"""
+query7 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.89) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
 
 high_default = pd.read_sql(query7, conn)
 high_default
 
 #Identify 75-89 Credit Utilization Users who defaulted
-query8 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.74 AND AVG_CREDIT_UTIL < 0.90) AND (default_pmt_next_month == 1)"""
+query8 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.74 AND AVG_CREDIT_UTIL < 0.90) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
 
 moderate_default = pd.read_sql(query8, conn)
 moderate_default
 
 #Identify 50-74 Credit Utilization Users who defaulted
-query9 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.49 AND AVG_CREDIT_UTIL < 0.75) AND (default_pmt_next_month == 1)"""
+query9 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.49 AND AVG_CREDIT_UTIL < 0.75) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
 
 low_default = pd.read_sql(query9, conn)
 low_default
 
 cc.info()
 cc.describe()
+
+#Import packages to help with data visualization
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+cc['Default Status'] = cc['DEFAULT_PMT_NEXT_MONTH'].map({0: 'Not Defaulted', 1:'Defaulted'})
+plt.figure(figsize=(8,6))
+sns.scatterplot(data=cc, x='BILL_AVG', y='AVG_CREDIT_UTIL', hue='Default Status', palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, alpha=0.3)
+plt.ylim([0,2])
+plt.axhline(y=0.30, color='red', linestyle='--', label='Default Risk Threshold')
+plt.title('Credit Utilization vs. Average Bill')
+plt.show()
