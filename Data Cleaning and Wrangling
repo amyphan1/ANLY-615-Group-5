@@ -153,3 +153,76 @@ plt.ylabel('Default Rate')
 plt.xlabel('Average Credit Utilization Band')
 plt.ylim(0, band_summary['default_rate'].max() * 1.1)
 plt.title('Default Rate by Credit Utilization Band')
+
+#Running a logistic regression
+def run_logit_on_subset(df, desc):
+print(f"\n=== Logistic regression for {desc} ===")
+
+y = df['DEFAULT_PMT_NEXT_MONTH'].values
+feature_cols = ['AVG_CREDIT_UTIL', 'LIMIT_BAL', 'BILL_AVG']
+X_raw = df[feature_cols].values
+
+#Standardize within this subset
+X_mean = X_raw.mean(axis=0)
+X_std = X_raw.std(axis=0)
+X_scaled = (X_raw - X_mean) / X_std
+X = np.column_stack([np.ones(X_scaled.shape[0]), X_scaled])
+
+#Fit
+beta = logistic_regression_gd(X, y, lr=0.01, n_iter=20000)
+print("Coefficients (beta):", beta)
+
+coef_names = ['intercept'] + feature_cols
+coef_df = pd.DataFrame({'feature': coef_names, 'coef': beta})
+coef_df['odds_ratio'] = np.exp(coef_df['coef'])
+print("\nCoefficients and odds ratios:")
+print(coef_df)
+
+#Predict with a 0.3 threshold
+p_hat = sigmoid(X @ beta)
+y_pred = (p_hat >= 0.3).astype(int)
+
+accuracy = (y_pred == y).mean()
+print("\nAccuracy:", accuracy)
+
+tn = np.sum((y == 0) & (y_pred == 0))
+fp = np.sum((y == 0) & (y_pred == 1))
+fn = np.sum((y == 1) & (y_pred == 0))
+tp = np.sum((y == 1) & (y_pred == 1))
+cm = np.array([[tn, fp],
+[fn, tp]])
+print("\nConfusion matrix (rows = actual, cols = predicted):")
+print(cm)
+
+#Plotting the confusion matrix
+fig, ax = plt.subplots(figsize=(4, 3))
+im = ax.imshow(cm, cmap='Blues')
+
+ax.set_xticks([0, 1])
+ax.set_yticks([0, 1])
+ax.set_xticklabels(['No Default', 'Default'])
+ax.set_yticklabels(['No Default', 'Default'])
+ax.set_xlabel('Predicted')
+ax.set_ylabel('Actual')
+ax.set_title(f'Confusion Matrix - {desc}')
+
+for i in range(2):
+for j in range(2):
+ax.text(j, i, cm[i, j],
+ha='center', va='center', color='black')
+
+plt.colorbar(im)
+plt.tight_layout()
+plt.show()
+
+#50–75% band
+subset_50_75 = cc[cc['util_band'] == '50–75%']
+run_logit_on_subset(subset_50_75, 'Utilization 50–75%')
+
+#75–90% band
+subset_75_90 = cc[cc['util_band'] == '75–90%']
+run_logit_on_subset(subset_75_90, 'Utilization 75–90%')
+
+#>90% band
+subset_90_plus = cc[cc['util_band'] == '>90%']
+run_logit_on_subset(subset_90_plus, 'Utilization >90%')
