@@ -141,10 +141,10 @@ cc['util_band'] = pd.cut(
 
 #Computed default rate per band
 band_summary = (
-    cc.groupby('util_band')['default_pmt_next_month']
+    cc.groupby('util_band')['DEFAULT_PMT_NEXT_MONTH']
       .mean()
       .reset_index()
-      .rename(columns={'default_pmt_next_month': 'default_rate'})
+      .rename(columns={'DEFAULT_PMT_NEXT_MONTH': 'default_rate'})
 )
 
 plt.figure(figsize=(8, 5))
