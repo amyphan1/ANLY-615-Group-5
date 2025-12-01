@@ -112,8 +112,8 @@ plt.show()
 #Created utilization bands
 cc['util_band'] = pd.cut(
     cc['AVG_CREDIT_UTIL'],
-    bins=[0.50, 0.75, 0.90, cc['AVG_CREDIT_UTIL'].max()],
-    labels=['50–75%', '75–90%', '>90%'],
+    bins=[0, 0.50, 0.75, 0.90, cc['AVG_CREDIT_UTIL'].max()],
+    labels=['0-50%', '50–75%', '75–90%', '>90%'],
     include_lowest=True
 )
 #Computed default rate per band
