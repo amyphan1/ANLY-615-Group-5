@@ -1,0 +1,123 @@
+import pandas as pd
+cc = pd.read_csv('UCI_Credit_Card.csv')
+# cc.head()
+
+# Below is dropping demographics from the data set
+cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
+# cc.head()
+
+#Renaming columns with a period to underscores for SQL compatability later
+cc.rename(columns={'default.payment.next.month': 'DEFAULT_PMT_NEXT_MONTH'}, inplace=True)
+
+# Next 3 lines of code is cleaning #s from 'e+05' to standard floats
+cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
+cc['LIMIT_BAL'] = cc['LIMIT_BAL'].replace(',', '', regex=True).astype(float)
+# print(cc.head(20))
+
+import numpy as np
+
+# Below is replacing '-2' values in pay columns with NaN
+pay_cols = ['PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
+cc[pay_cols] = cc[pay_cols].replace(-2, np.nan)
+# print(cc.head(10))
+
+# Below is creating a column for the avg bill amount
+cc['BILL_AVG'] = cc[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
+# print(cc['BILL_AVG'].head(15))
+# print(cc.shape)
+
+# Below is dropping the rows where bill avg = 0 (aka 0 debt)
+cc = cc[cc['BILL_AVG'] != 0]
+# print(cc.shape)
+
+# Below is creating the average credit utilization
+cc['AVG_CREDIT_UTIL'] = cc['BILL_AVG'] / cc['LIMIT_BAL']
+#print(cc['AVG_CREDIT_UTIL'].head())
+
+#Next converts those values to percentages
+cc['AVG_CREDIT_UTIL_PCT'] = (cc['BILL_AVG'] / cc['LIMIT_BAL']) * 100
+
+# Next step is exporting the clean dataset 
+cc.to_excel('cleaned_dataset.xlsx', index=False)
+
+# Creating a new df with our cleaned dataset
+clean_df = pd.read_excel('cleaned_dataset.xlsx')
+
+## Creating the database
+import sqlite3
+conn = sqlite3.connect('cc')
+
+# Writing our cleaned data to the database - returns 29130 rows which is how many rows are in our cleaned dataset
+clean_df.to_sql('my_table', conn, index=False, if_exists='replace')
+
+#To see how much each customer owes and paid
+query = """SELECT id, DEFAULT_PMT_NEXT_MONTH, SUM(BILL_AMT1 + BILL_AMT2 + BILL_AMT3 + BILL_AMT4 + BILL_AMT5 + BILL_AMT6) AS AMT_OWED, SUM(PAY_AMT1 + PAY_AMT2 + PAY_AMT3 + PAY_AMT4 + PAY_AMT5 + PAY_AMT6) AS AMT_PAYED
+FROM my_table GROUP BY id, DEFAULT_PMT_NEXT_MONTH"""
+
+sum_amts_owed_and_payed = pd.read_sql(query, conn)
+
+#Identify High Credit Utilization Users who defaulted
+query2 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.29) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
+
+high_credit_util_and_default = pd.read_sql(query2, conn)
+
+#Number of customers at risk of a default 
+query3 = """SELECT COUNT(id) FROM my_table WHERE AVG_CREDIT_UTIL > 0.29"""
+
+number_at_risk = pd.read_sql(query3, conn)
+number_at_risk
+
+#Total number of customers
+query4 = """SELECT COUNT(id) FROM my_table"""
+total_ids = pd.read_sql(query4, conn)
+total_ids
+
+#Percentage of customers at risk
+pct_at_risk = (number_at_risk / total_ids) * 100
+pct_at_risk
+
+#Low risk customers
+query5 = """SELECT id FROM my_table WHERE (AVG_CREDIT_UTIL > 0.29 AND AVG_CREDIT_UTIL < 0.50)"""
+low_risk = pd.read_sql(query5, conn)
+low_risk
+
+
+#High risk customers
+query6 = """SELECT id FROM my_table WHERE AVG_CREDIT_UTIL > 0.49"""
+high_risk = pd.read_sql(query6, conn)
+high_risk
+
+#Identify 90+ Credit Utilization Users who defaulted
+query7 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.89) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
+
+high_default = pd.read_sql(query7, conn)
+high_default
+
+#Identify 75-89 Credit Utilization Users who defaulted
+query8 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.74 AND AVG_CREDIT_UTIL < 0.90) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
+
+moderate_default = pd.read_sql(query8, conn)
+moderate_default
+
+#Identify 50-74 Credit Utilization Users who defaulted
+query9 = """SELECT * FROM my_table WHERE (AVG_CREDIT_UTIL > 0.49 AND AVG_CREDIT_UTIL < 0.75) AND (DEFAULT_PMT_NEXT_MONTH == 1)"""
+
+low_default = pd.read_sql(query9, conn)
+low_default
+
+cc.info()
+cc.describe()
+
+#Import packages to help with data visualization
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+#Scatterplot to visualize the relationship between bill avg and default pmt next month with added hue on whether customer defaulted
+
+cc['Default Status'] = cc['DEFAULT_PMT_NEXT_MONTH'].map({0: 'Not Defaulted', 1:'Defaulted'})
+plt.figure(figsize=(8,6))
+sns.scatterplot(data=cc, x='BILL_AVG', y='AVG_CREDIT_UTIL', hue='Default Status', palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, alpha=0.3)
+plt.ylim([0,2])
+plt.axhline(y=0.30, color='red', linestyle='--', label='Default Risk Threshold')
+plt.title('Credit Utilization vs. Average Bill')
+plt.show()
