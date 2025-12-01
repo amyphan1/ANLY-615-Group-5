@@ -41,55 +41,55 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 
 1. Data Cleaning 
 
-- Dropped demographic columns not used in the analysis.  
-
-- Converted LIMIT_BAL to float and fixed formatting.  
-
-- Replaced payment status code -2 with NaN.  
-
-- Removed rows with BILL_AVG = 0 (no debt).  
+	- Dropped demographic columns not used in the analysis.  
+	
+	- Converted LIMIT_BAL to float and fixed formatting.  
+	
+	- Replaced payment status code -2 with NaN.  
+	
+	- Removed rows with BILL_AVG = 0 (no debt).  
 
  
 
 2. Feature Engineering 
 
-- Created BILL_AVG, AVG_CREDIT_UTIL, and AVG_CREDIT_UTIL_PCT.  
-
-- Stored the cleaned data in a SQLite database and ran SQL queries to:  
-
-- Count customers above utilization thresholds (i.e., 30%) 
-
-	- Broke down utilization thresholds to 50-75%, 75-90%, and >90% 
-
-- Defines “risk bands” based on utilization.  
+	- Created BILL_AVG, AVG_CREDIT_UTIL, and AVG_CREDIT_UTIL_PCT.  
+	
+	- Stored the cleaned data in a SQLite database and ran SQL queries to:  
+	
+	- Count customers above utilization thresholds (i.e., 30%) 
+	
+		- Broke down utilization thresholds to 50-75%, 75-90%, and >90% 
+	
+	- Defines “risk bands” based on utilization.  
 
  
 
 3. Visualization 
 
-- Scatterplot: BILL_AVG vs AVG_CREDIT_UTIL colored by default status.  
-
-- Boxplot: credit utilization by default vs non‑default.  
-
-- Bar chart: default rate by utilization band.  
-
-- Confusion matrices: model performance overall and within each utilization band.  
+	- Scatterplot: BILL_AVG vs AVG_CREDIT_UTIL colored by default status.  
+	
+	- Boxplot: credit utilization by default vs non‑default.  
+	
+	- Bar chart: default rate by utilization band.  
+	
+	- Confusion matrices: model performance overall and within each utilization band.  
 
  
 
 4. Logistic Regression 
 
-- Implemented logistic regression using NumPy.  
-
-- Used features AVG_CREDIT_UTIL, LIMIT_BAL, and BILL_AVG 
-
-- Evaluated accuracy and confusion matrices for:  
-
-- All customers.  
-
-- High‑utilization bands: 50-75%, 75-90%, and >90%.  
-
-- Interpreted coefficients and odds ratios to describe how utilization and limit relate to default risk.  
+	- Implemented logistic regression using NumPy.  
+	
+	- Used features AVG_CREDIT_UTIL, LIMIT_BAL, and BILL_AVG 
+	
+	- Evaluated accuracy and confusion matrices for:  
+	
+	- All customers.  
+	
+	- High‑utilization bands: 50-75%, 75-90%, and >90%.  
+	
+	- Interpreted coefficients and odds ratios to describe how utilization and limit relate to default risk.  
 
  
 
@@ -97,43 +97,43 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 
 1. Requirements 
 
-- Python 3.x  
-
-- Libraries:  
-
-- pandas 
-
-- numpy 
-
-- matplotlib 
-
-- sqlite3  
-
-- seaborn 
+	- Python 3.x  
+	
+	- Libraries:  
+	
+	- pandas 
+	
+	- numpy 
+	
+	- matplotlib 
+	
+	- sqlite3  
+	
+	- seaborn 
 
 ## Steps 
 
 1. Clone this repository:  
 
-Git: clone https://github.com/amyphan2/ANLY-615-Group-5.git 
+	Git: clone https://github.com/amyphan2/ANLY-615-Group-5.git 
 
 2. Install packages (example with pip):  
-
-pip install pandas numpy matplotlib statsmodels  
+	
+	pip install pandas numpy matplotlib statsmodels  
 
 3. Make sure UCI_Credit_Card.csv is in the project folder.  
 
 4. Run the notebook or script:  
-
-- Open Data Cleaning and Wrangling.ipynb and run all cells in order.  
+	
+	- Open Data Cleaning and Wrangling.ipynb and run all cells in order.  
 
 5. The code will:  
 
-- Clean and save the dataset. 
-
-- Run the logistic regression.  
-
-- Display visualizations (scatterplots, boxplots, bar chart, and confusion 	matrices).  
+	- Clean and save the dataset. 
+	
+	- Run the logistic regression.  
+	
+	- Display visualizations (scatterplots, boxplots, bar chart, and confusion 	matrices).  
 
 ## Project Data 
 
