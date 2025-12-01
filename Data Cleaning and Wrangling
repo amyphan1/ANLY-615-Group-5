@@ -112,8 +112,8 @@ plt.show()
 #Created utilization bands
 cc['util_band'] = pd.cut(
     cc['AVG_CREDIT_UTIL'],
-    bins=[0.30, 0.50, 0.75, 0.90, cc['AVG_CREDIT_UTIL'].max()],
-    labels=['30-50%', '50–75%', '75–90%', '>90%'],
+    bins=[0.3, 0.50, 0.75, 0.90, cc['AVG_CREDIT_UTIL'].max()],
+    labels=['30-50%', '50-75%', '75-90%', '>90%'],
     include_lowest=True
 )
 #Computed default rate per band
@@ -203,17 +203,34 @@ def run_logit_on_subset(df, desc):
     plt.tight_layout()
     plt.show()
 
+#30–50% band
+subset_30_50 = cc[cc['util_band'] == '30-50%']
+run_logit_on_subset(subset_30_50, 'Utilization 30-50%')
+
 #50–75% band
-subset_50_75 = cc[cc['util_band'] == '50–75%']
-run_logit_on_subset(subset_50_75, 'Utilization 50–75%')
+subset_50_75 = cc[cc['util_band'] == '50-75%']
+run_logit_on_subset(subset_50_75, 'Utilization 50-75%')
 
 #75–90% band
-subset_75_90 = cc[cc['util_band'] == '75–90%']
-run_logit_on_subset(subset_75_90, 'Utilization 75–90%')
+subset_75_90 = cc[cc['util_band'] == '75-90%']
+run_logit_on_subset(subset_75_90, 'Utilization 75-90%')
 
 #>90% band
 subset_90_plus = cc[cc['util_band'] == '>90%']
 run_logit_on_subset(subset_90_plus, 'Utilization >90%')
+
+#50–75% Utilization
+plt.figure(figsize=(8,6))
+sns.scatterplot(
+    data=subset_30_50, 
+    x='BILL_AVG', 
+    y='AVG_CREDIT_UTIL', 
+    hue='Default Status', 
+    palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, 
+    alpha=0.3
+)
+plt.title('Credit Utilization 30-50% Band')
+plt.show()
 
 #50–75% Utilization
 plt.figure(figsize=(8,6))
@@ -225,7 +242,7 @@ sns.scatterplot(
     palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, 
     alpha=0.3
 )
-plt.title('Credit Utilization 50–75% Band')
+plt.title('Credit Utilization 50-75% Band')
 plt.show()
 
 #75–90% Utilization
@@ -238,7 +255,7 @@ sns.scatterplot(
     palette={'Not Defaulted': 'blue', 'Defaulted': 'red'}, 
     alpha=0.3
 )
-plt.title('Credit Utilization 75–90% Band')
+plt.title('Credit Utilization 75-90% Band')
 plt.show()
 
 #>90% Utilization
