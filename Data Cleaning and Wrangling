@@ -7,7 +7,7 @@ cc.drop(['SEX', 'EDUCATION', 'MARRIAGE', 'AGE'], axis = 1, inplace = True)
 #Renaming columns with a period to underscores for SQL compatability later
 cc.rename(columns={'default.payment.next.month': 'DEFAULT_PMT_NEXT_MONTH'}, inplace=True)
 
-# Next 3 lines of code is cleaning #s from 'e+05' to standard floats
+#Next 3 lines of code is cleaning #s from 'e+05' to standard floats
 cc['LIMIT_BAL'] = pd.to_numeric(cc['LIMIT_BAL'], errors='coerce')
 cc['LIMIT_BAL'] = cc['LIMIT_BAL'].replace(',', '', regex=True).astype(float)
 
@@ -20,7 +20,7 @@ cc[pay_cols] = cc[pay_cols].replace(-2, np.nan)
 #Creating a column for the avg bill amount
 cc['BILL_AVG'] = cc[['BILL_AMT1', 'BILL_AMT2', 'BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']].mean(axis=1)
 
-Dropping the rows where bill avg = 0 (aka 0 debt)
+#Dropping the rows where bill avg = 0 (aka 0 debt)
 cc = cc[cc['BILL_AVG'] != 0]
 
 #Creating the average credit utilization
@@ -136,6 +136,7 @@ plt.ylabel('Default Rate')
 plt.xlabel('Average Credit Utilization Band')
 plt.ylim(0, band_summary['default_rate'].max() * 1.1)
 plt.title('Default Rate by Credit Utilization Band')
+
 #Running a logistic regression
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
@@ -221,7 +222,7 @@ run_logit_on_subset(subset_75_90, 'Utilization 75–90%')
 subset_90_plus = cc[cc['util_band'] == '>90%']
 run_logit_on_subset(subset_90_plus, 'Utilization >90%')
 
-# 50–75% Utilization
+#50–75% Utilization
 plt.figure(figsize=(8,6))
 sns.scatterplot(
     data=subset_50_75, 
@@ -234,7 +235,7 @@ sns.scatterplot(
 plt.title('Credit Utilization 50–75% Band')
 plt.show()
 
-# 75–90% Utilization
+#75–90% Utilization
 plt.figure(figsize=(8,6))
 sns.scatterplot(
     data=subset_75_90, 
@@ -247,7 +248,7 @@ sns.scatterplot(
 plt.title('Credit Utilization 75–90% Band')
 plt.show()
 
-# >90% Utilization
+#>90% Utilization
 plt.figure(figsize=(8,6))
 sns.scatterplot(
     data=subset_90_plus, 
