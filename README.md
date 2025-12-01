@@ -3,7 +3,7 @@ Final Project for ANLY 615 Data Wrangling.
 
 ## Project Overview  
 
-This project analyzes the UCI_Credit_Card dataset to investigate how credit card utilization relates to the risk of defaulting on the next month’s payment. The dataset includes data regarding 30,000 credit clients in Taiwan from April 2005 to Septemeber 2005. We cleaned the raw dataset, engineered new features such as average credit utilization, created visualizations to aid in analysis, and applied logistic regression to estimate the probability of default for different credit utilization bands (50-75%, 75-90%, >90%).  
+This project analyzes the UCI_Credit_Card dataset to investigate how credit card utilization relates to the risk of defaulting on the next month’s payment. The dataset includes data regarding 30,000 credit clients in Taiwan from April 2005 to Septemeber 2005. We cleaned the raw dataset, engineered new features such as average credit utilization, created visualizations to aid in analysis, and applied logistic regression to estimate the probability of default for different credit utilization bands (30-50%, 50-75%, 75-90%, >90%).  
 
 ## Purpose 
 
