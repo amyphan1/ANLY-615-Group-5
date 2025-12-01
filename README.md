@@ -111,7 +111,7 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 
 - seaborn 
 
-2. Steps 
+## Steps 
 
 1. Clone this repository:  
 
