@@ -33,7 +33,7 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 
 - AVG_CREDIT_UTIL: BILL_AVG / LIMIT_BAL 
 
-- util_band: utilization buckets (50-75%, 75-90%, >90%).  
+- util_band: utilization buckets (30-50%, 50-75%, 75-90%, >90%).  
 
  
 
@@ -59,7 +59,7 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 	
 	- Count customers above utilization thresholds (i.e., 30%) 
 	
-		- Broke down utilization thresholds to 50-75%, 75-90%, and >90% 
+		- Broke down utilization thresholds to 30-50%, 50-75%, 75-90%, and >90% 
 	
 	- Defines “risk bands” based on utilization.  
 
