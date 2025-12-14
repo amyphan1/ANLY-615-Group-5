@@ -115,7 +115,7 @@ The goal of the analysis was to evaluate if credit utilization could be used to 
 
 1. Clone this repository:  
 
-	Git: clone https://github.com/amyphan2/ANLY-615-Group-5.git 
+	Git: clone https://github.com/amyphan1/ANLY-615-Group-5.git 
 
 2. Install packages (example with pip):  
 	
